@@ -2,13 +2,14 @@ import pandas as pd
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
-pd.options.display.max_rows = 100
-pd.options.display.max_columns = 50
+import seaborn as sns
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
 pd.options.display.float_format = "{:.1f}".format
 
 training_df = pd.read_csv("https://download.mlcc.google.com/mledu-datasets/california_housing_train.csv")
 
-training_df['median_house_value'] /= 1000.0
+training_df['rooms_per_person'] = training_df['total_rooms'] / training_df['population']
 
 print(training_df.head())
 
@@ -79,11 +80,11 @@ def plot_the_loss_curve(epochs, rmse):
     
 print("Defined plot_the_model and plot_the_loss_curve functions.")
 
-learning_rate = 0.01
-epochs = 30
+learning_rate = 0.06
+epochs = 25
 batch_size = 30
 
-my_feature = 'total_rooms'
+my_feature = 'rooms_per_person'
 my_label = 'median_house_value'
 
 my_model = None
@@ -111,3 +112,9 @@ def predict_house_values(n, feature, label):
                                    predicted_values[i][0]))
 
 predict_house_values(10, my_feature, my_label)
+
+corr = training_df.corr()
+sns.heatmap(corr, 
+            xticklabels=corr.columns.values,
+            yticklabels=corr.columns.values)
+plt.show()
